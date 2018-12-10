@@ -1,5 +1,5 @@
 import Link from "next/link";
-
-const Sell = props => <div />;
+import CreateItem from "../components/CreateItem";
+const Sell = props => <CreateItem />;
 
 export default Sell;

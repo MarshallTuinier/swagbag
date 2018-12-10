@@ -54,3 +54,5 @@ const ItemsList = styled.div`
   max-width: ${({ theme }) => theme.maxWidth};
   margin: 0 auto;
 `;
+
+export { ALL_ITEMS_QUERY };
