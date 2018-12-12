@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import Link from "next/link";
 
+import DeleteItem from "./DeleteItem";
 import formatMoney from "../lib/formatMoney";
 
 export default class Item extends Component {
@@ -37,7 +38,7 @@ export default class Item extends Component {
             <a>Edit 📝</a>
           </Link>
           <button>Add To Cart</button>
-          <button>Delete</button>
+          <DeleteItem id={item.id}>Delete This Item</DeleteItem>
         </div>
       </StyledItem>
     );
@@ -95,6 +96,10 @@ const StyledItem = styled.div`
       border: 0;
       font-size: 1rem;
       padding: 1rem;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 `;

@@ -43,7 +43,6 @@ const Logo = styled.h1`
   position: relative;
   z-index: 2;
   transform: skew(-7deg);
-  width: 98.5vw;
 
   a {
     padding: 0.5rem 1rem;
