@@ -37,7 +37,8 @@ export default class SingleItem extends Component {
 
 const StyledSingleItem = styled.div`
   max-width: 1200px;
-  margin: 2 rem auto;
+  margin: 2rem auto;
+  padding: 2rem;
   box-shadow: ${({ theme }) => theme.boxShadow};
   display: grid;
   grid-auto-columns: 1fr;

@@ -1,17 +1,25 @@
 import React, { Component } from "react";
 import { Query } from "react-apollo";
-import gql from "graphql-tag";
 import styled from "styled-components";
 
 import { ALL_ITEMS_QUERY } from "../GraphQL";
 import Item from "./Item";
+import { perPage } from "../config";
+import Pagination from "./Pagination";
 
 export default class Items extends Component {
   render() {
     return (
       <Center>
         <p>Items!</p>
-        <Query query={ALL_ITEMS_QUERY}>
+        <Pagination page={this.props.page} />
+        <Query
+          query={ALL_ITEMS_QUERY}
+          variables={{
+            // Skip the appropriate amount of pages
+            skip: this.props.page * perPage - perPage
+          }}
+        >
           {({ data, error, loading }) => {
             if (loading) return <p>Loading...</p>;
             if (error) return <p>Error: {error.message}</p>;
@@ -24,6 +32,7 @@ export default class Items extends Component {
             );
           }}
         </Query>
+        <Pagination page={this.props.page} />
       </Center>
     );
   }

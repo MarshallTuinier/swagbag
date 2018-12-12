@@ -36,7 +36,6 @@ export default class CreateItem extends Component {
     );
 
     const json = await response.json();
-    console.log(json);
     this.setState({
       image: json.secure_url,
       largeImage: json.eager[0].secure_url
