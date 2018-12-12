@@ -16,6 +16,7 @@ export default class Signup extends Component {
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
+
   render() {
     const { name, email, password, confirmPassword } = this.state;
     return (
