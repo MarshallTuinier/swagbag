@@ -1,24 +1,38 @@
 import Link from "next/link";
 import styled from "styled-components";
 
+import User from "./User";
+import Signout from "./Signout";
+
 const Nav = () => (
-  <StyledNav>
-    <Link href="/items">
-      <a>Shop</a>
-    </Link>
-    <Link href="/sell">
-      <a>Sell</a>
-    </Link>
-    <Link href="/signup">
-      <a>Signup</a>
-    </Link>
-    <Link href="/orders">
-      <a>Orders</a>
-    </Link>
-    <Link href="/account">
-      <a>Account</a>
-    </Link>
-  </StyledNav>
+  <User>
+    {({ data: { currentUser } }) => (
+      <StyledNav>
+        <Link href="/items">
+          <a>Shop</a>
+        </Link>
+        {currentUser && (
+          <>
+            <Link href="/sell">
+              <a>Sell</a>
+            </Link>
+            <Link href="/orders">
+              <a>Orders</a>
+            </Link>
+            <Link href="/account">
+              <a>Account</a>
+            </Link>
+            <Signout />
+          </>
+        )}
+        {!currentUser && (
+          <Link href="/signup">
+            <a>Signup</a>
+          </Link>
+        )}
+      </StyledNav>
+    )}
+  </User>
 );
 
 // -------------------- Styles -------------------- //
@@ -36,11 +50,12 @@ const StyledNav = styled.ul`
     align-items: center;
     position: relative;
     text-transform: uppercase;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 1em;
     background: none;
     border: 0;
     cursor: pointer;
+    color: ${({ theme }) => theme.black};
     @media (max-width: 700px) {
       font-size: 10px;
       padding: 0 10px;

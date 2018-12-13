@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const Mutation = {
   async createItem(parent, args, ctx, info) {
     // TODO: Check if user is logged in
@@ -76,6 +77,37 @@ const Mutation = {
 
     // Return user to the client
     return user;
+  },
+
+  async signin(parent, args, ctx, info) {
+    // Check if there is a user with that email
+    const user = await ctx.db.query.user({ where: { email: args.email } });
+    if (!user) {
+      throw new Error(`No such user found for email ${args.email}`);
+    }
+
+    // Check if the password is correct
+    const valid = await bcrypt.compare(args.password, user.password);
+    if (!valid) {
+      throw new Error("Invalid Password");
+    }
+
+    // Create the JWT
+    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+
+    // Set the JWT as a cookie on the response
+    ctx.response.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year cookie
+    });
+
+    // Return the user
+    return user;
+  },
+
+  async signout(parent, args, ctx, info) {
+    ctx.response.clearCookie("token");
+    return { message: "Successfully logged out!" };
   }
 };
 

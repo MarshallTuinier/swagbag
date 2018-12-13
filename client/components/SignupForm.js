@@ -3,9 +3,9 @@ import { Mutation } from "react-apollo";
 import styled, { keyframes } from "styled-components";
 import Error from "./ErrorMessage";
 
-import { SIGNUP_MUTATION } from "../GraphQL";
+import { SIGNUP_MUTATION, CURRENT_USER_QUERY } from "../GraphQL";
 
-export default class Signup extends Component {
+export default class SignupForm extends Component {
   state = {
     name: "",
     password: "",
@@ -20,7 +20,11 @@ export default class Signup extends Component {
   render() {
     const { name, email, password, confirmPassword } = this.state;
     return (
-      <Mutation mutation={SIGNUP_MUTATION} variables={this.state}>
+      <Mutation
+        mutation={SIGNUP_MUTATION}
+        variables={this.state}
+        refetchQueries={[{ query: CURRENT_USER_QUERY }]}
+      >
         {(signup, { error, loading }) => {
           return (
             <Form

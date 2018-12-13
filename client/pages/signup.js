@@ -1,10 +1,12 @@
-import SignupForm from "../components/Signup";
 import styled from "styled-components";
+
+import SignupForm from "../components/SignupForm";
+import SigninForm from "../components/SigninForm";
 
 const signup = props => (
   <Columns>
     <SignupForm />
-    <SignupForm />
+    <SigninForm />
     <SignupForm />
   </Columns>
 );
