@@ -8,7 +8,7 @@ const { transport, makeEmail } = require("../mail.js");
 const Mutation = {
   async createItem(parent, args, ctx, info) {
     // Check if user is logged in
-    if (!ctx.request.userID) {
+    if (!ctx.request.userId) {
       throw new Error("You must be logged in to do that!");
     }
 
