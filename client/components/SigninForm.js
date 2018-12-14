@@ -23,7 +23,7 @@ export default class SigninForm extends Component {
         variables={this.state}
         refetchQueries={[{ query: CURRENT_USER_QUERY }]}
       >
-        {(signin, { error, loading }) => {
+        {(signin, { error, loading, called }) => {
           return (
             <Form
               method="post"
@@ -39,6 +39,7 @@ export default class SigninForm extends Component {
               <fieldset disabled={loading} aria-busy={loading}>
                 <h2>Sign In to your Account</h2>
                 <Error error={error} />
+                {!error && !loading && called && <p>Sucessfully Logged in!</p>}
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"

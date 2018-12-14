@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Query } from "react-apollo";
-import propTypes from "prop-types";
+import PropTypes from "prop-types";
 
 import { CURRENT_USER_QUERY } from "../GraphQL";
 
@@ -15,5 +15,5 @@ export default class User extends Component {
 }
 
 User.propTypes = {
-  children: propTypes.func.isRequired
+  children: PropTypes.func.isRequired
 };

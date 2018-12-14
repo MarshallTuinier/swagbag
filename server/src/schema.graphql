@@ -31,6 +31,7 @@ type Mutation {
     password: String!
     confirmPassword: String!
   ): User!
+  updatePermissions(permissions: [Permission], userId: ID!): User
 }
 
 type Query {
@@ -40,12 +41,10 @@ type Query {
     skip: Int
     first: Int
   ): [Item]!
-
   item(where: ItemWhereUniqueInput!): Item
-
   itemsConnection(where: ItemWhereInput): ItemConnection!
-
   currentUser: User
+  users: [User]!
 }
 
 type SuccessMessage {
