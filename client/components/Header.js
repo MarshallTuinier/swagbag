@@ -4,6 +4,7 @@ import Router from "next/router";
 import NProgress from "nprogress";
 
 import Nav from "./Nav";
+import Cart from "./Cart";
 
 // Hook into next router to trigger the loading progress components
 Router.onRouteChangeStart = () => {
@@ -32,6 +33,7 @@ const Header = () => (
       <p>Search</p>
     </div>
     <div>Cart</div>
+    <Cart />
   </StyledHeader>
 );
 

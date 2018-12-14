@@ -1,6 +1,8 @@
 import Link from "next/link";
 import styled from "styled-components";
+import { Mutation } from "react-apollo";
 
+import { TOGGLE_CART_MUTATION } from "../GraphQL";
 import User from "./User";
 import Signout from "./Signout";
 
@@ -30,6 +32,9 @@ const Nav = () => (
             <a>Signup</a>
           </Link>
         )}
+        <Mutation mutation={TOGGLE_CART_MUTATION}>
+          {toggleCart => <button onClick={toggleCart}>My Cart</button>}
+        </Mutation>
       </StyledNav>
     )}
   </User>
