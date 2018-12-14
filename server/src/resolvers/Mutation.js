@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 
+const { transport, makeEmail } = require("../mail.js");
+
 const Mutation = {
   async createItem(parent, args, ctx, info) {
     // TODO: Check if user is logged in
@@ -138,7 +140,24 @@ const Mutation = {
       where: { email: args.email },
       data: { resetToken, resetTokenExpiry }
     });
+
     // Email the reset token
+    try {
+      const mailRes = await transport.sendMail({
+        from: "help@swagbag.com",
+        to: user.email,
+        subject: "Your Password Reset Token",
+        html: makeEmail(
+          `Your password reset token is here! Follow this link to reset your password. \n\n <a href="${
+            process.env.FRONTEND_URL
+          }/reset?resetToken=${resetToken}">Click Here to Reset</a> `
+        )
+      });
+    } catch (error) {
+      throw new Error("Sorry, something went wrong!");
+    }
+
+    // Return the success message
     return { message: "Password Reset Email sent!" };
   },
 
