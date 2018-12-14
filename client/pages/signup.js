@@ -2,12 +2,13 @@ import styled from "styled-components";
 
 import SignupForm from "../components/SignupForm";
 import SigninForm from "../components/SigninForm";
+import RequestResetForm from "../components/RequestResetForm";
 
 const signup = props => (
   <Columns>
     <SignupForm />
     <SigninForm />
-    <SignupForm />
+    <RequestResetForm />
   </Columns>
 );
 

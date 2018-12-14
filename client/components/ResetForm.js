@@ -3,13 +3,11 @@ import { Mutation } from "react-apollo";
 import styled, { keyframes } from "styled-components";
 import Error from "./ErrorMessage";
 
-import { SIGNUP_MUTATION, CURRENT_USER_QUERY } from "../GraphQL";
+import { RESET_MUTATION, CURRENT_USER_QUERY } from "../GraphQL";
 
-export default class SignupForm extends Component {
+export default class Reset extends Component {
   state = {
-    name: "",
     password: "",
-    email: "",
     confirmPassword: ""
   };
 
@@ -18,54 +16,41 @@ export default class SignupForm extends Component {
   };
 
   render() {
-    const { name, email, password, confirmPassword } = this.state;
+    const { password, confirmPassword } = this.state;
     return (
       <Mutation
-        mutation={SIGNUP_MUTATION}
-        variables={this.state}
+        mutation={RESET_MUTATION}
         refetchQueries={[{ query: CURRENT_USER_QUERY }]}
       >
-        {(signup, { error, loading }) => {
+        {(resetPassword, { error, loading, called }) => {
           return (
             <Form
               method="post"
               onSubmit={async event => {
                 event.preventDefault();
-                await signup();
+                await resetPassword({
+                  variables: {
+                    resetToken: this.props.resetToken,
+                    ...this.state
+                  }
+                });
                 this.setState({
-                  name: "",
                   password: "",
-                  email: "",
                   confirmPassword: ""
                 });
               }}
             >
               <fieldset disabled={loading} aria-busy={loading}>
-                <h2>Sign Up for an Account</h2>
+                <h2>Reset Your Password</h2>
                 <Error error={error} />
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={this.handleChange}
-                  required={true}
-                />
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  value={name}
-                  onChange={this.handleChange}
-                  required={true}
-                />
-                <label htmlFor="password">Password</label>
+                {!error && !loading && called && (
+                  <p>Success! Your password has been reset!</p>
+                )}
+                <label htmlFor="password">New Password</label>
                 <input
                   type="password"
                   name="password"
-                  placeholder="Password"
+                  placeholder="New Password"
                   value={password}
                   onChange={this.handleChange}
                   required={true}
@@ -79,7 +64,7 @@ export default class SignupForm extends Component {
                   onChange={this.handleChange}
                   required={true}
                 />
-                <button type="submit">Sign Up!</button>
+                <button type="submit">Reset your Password!</button>
               </fieldset>
             </Form>
           );
@@ -94,12 +79,10 @@ export default class SignupForm extends Component {
 const loading = keyframes`
   from {
     background-position: 0 0;
-    /* rotate: 0; */
   }
 
   to {
     background-position: 100% 100%;
-    /* rotate: 360deg; */
   }
 `;
 
@@ -162,10 +145,6 @@ const Form = styled.form`
     &[aria-busy="true"]::before {
       background-size: 50% auto;
       animation: ${loading} 0.5s linear infinite;
-    }
-
-    .alert {
-      color: ${({ theme }) => theme.red};
     }
   }
 `;

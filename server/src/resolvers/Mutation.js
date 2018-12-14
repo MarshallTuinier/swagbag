@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { randomBytes } = require("crypto");
+const { promisify } = require("util");
 
 const Mutation = {
   async createItem(parent, args, ctx, info) {
@@ -51,6 +53,14 @@ const Mutation = {
     // Make all the email addresses lowercase
     args.email = args.email.toLowerCase();
 
+    // Ensure the passwords match
+    if (args.password !== args.confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+
+    // Since we don't want to save the confirmPassword field, delete import PropTypes from 'prop-types'
+    delete args.confirmPassword;
+
     // Hash/Salt the password
     const password = await bcrypt.hash(args.password, 10);
 
@@ -80,6 +90,10 @@ const Mutation = {
   },
 
   async signin(parent, args, ctx, info) {
+    // Since we made the emails lowercase in the signup mutation,
+    // Ensure we do it here as well
+    args.email = args.email.toLowerCase();
+
     // Check if there is a user with that email
     const user = await ctx.db.query.user({ where: { email: args.email } });
     if (!user) {
@@ -105,9 +119,71 @@ const Mutation = {
     return user;
   },
 
-  async signout(parent, args, ctx, info) {
+  signout(parent, args, ctx, info) {
     ctx.response.clearCookie("token");
     return { message: "Successfully logged out!" };
+  },
+
+  async requestReset(parent, args, ctx, info) {
+    // Check if the user exists
+    const user = await ctx.db.query.user({ where: { email: args.email } });
+    if (!user) {
+      throw new Error(`No such user found for email ${args.email}`);
+    }
+
+    // Set a reset token and expiry on the user
+    const resetToken = (await promisify(randomBytes)(20)).toString("hex");
+    const resetTokenExpiry = Date.now() + 3600000; // 1 Hour from now
+    const res = await ctx.db.mutation.updateUser({
+      where: { email: args.email },
+      data: { resetToken, resetTokenExpiry }
+    });
+    // Email the reset token
+    return { message: "Password Reset Email sent!" };
+  },
+
+  async resetPassword(parent, args, ctx, info) {
+    // Check if passwords match
+    if (args.password !== args.confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+
+    // Check if the token is valid
+    // Check if the token is expired
+    const [user] = await ctx.db.query.users({
+      where: {
+        resetToken: args.resetToken,
+        resetTokenExpiry_gte: Date.now() - 3600000
+      }
+    });
+    if (!user) {
+      throw new Error("This token is either invalid or expired");
+    }
+
+    // Hash the new password
+    const password = await bcrypt.hash(args.password, 10);
+
+    // Save the new password to the user and remove old resetToken fields
+    const updatedUser = await ctx.db.mutation.updateUser({
+      where: { email: user.email },
+      data: {
+        password,
+        resetToken: null,
+        resetTokenExpiry: null
+      }
+    });
+
+    // Create the JWT
+    const token = jwt.sign({ userId: updatedUser.id }, process.env.APP_SECRET);
+
+    // Set the JWT as a cookie on the response
+    ctx.response.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365
+    });
+
+    // return the updated user
+    return updatedUser;
   }
 };
 

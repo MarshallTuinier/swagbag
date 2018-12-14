@@ -3,14 +3,11 @@ import { Mutation } from "react-apollo";
 import styled, { keyframes } from "styled-components";
 import Error from "./ErrorMessage";
 
-import { SIGNUP_MUTATION, CURRENT_USER_QUERY } from "../GraphQL";
+import { REQUEST_RESET_MUTATION } from "../GraphQL";
 
-export default class SignupForm extends Component {
+export default class RequestResetForm extends Component {
   state = {
-    name: "",
-    password: "",
-    email: "",
-    confirmPassword: ""
+    email: ""
   };
 
   handleChange = event => {
@@ -18,31 +15,27 @@ export default class SignupForm extends Component {
   };
 
   render() {
-    const { name, email, password, confirmPassword } = this.state;
+    const { email } = this.state;
     return (
-      <Mutation
-        mutation={SIGNUP_MUTATION}
-        variables={this.state}
-        refetchQueries={[{ query: CURRENT_USER_QUERY }]}
-      >
-        {(signup, { error, loading }) => {
+      <Mutation mutation={REQUEST_RESET_MUTATION} variables={this.state}>
+        {(requestReset, { error, loading, called }) => {
           return (
             <Form
               method="post"
               onSubmit={async event => {
                 event.preventDefault();
-                await signup();
+                await requestReset();
                 this.setState({
-                  name: "",
-                  password: "",
-                  email: "",
-                  confirmPassword: ""
+                  email: ""
                 });
               }}
             >
               <fieldset disabled={loading} aria-busy={loading}>
-                <h2>Sign Up for an Account</h2>
+                <h2>Reset your Password</h2>
                 <Error error={error} />
+                {!error && !loading && called && (
+                  <p>Success! Check your email for a reset link!</p>
+                )}
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"
@@ -52,34 +45,7 @@ export default class SignupForm extends Component {
                   onChange={this.handleChange}
                   required={true}
                 />
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  value={name}
-                  onChange={this.handleChange}
-                  required={true}
-                />
-                <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={this.handleChange}
-                  required={true}
-                />
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  onChange={this.handleChange}
-                  required={true}
-                />
-                <button type="submit">Sign Up!</button>
+                <button type="submit">Request Reset!</button>
               </fieldset>
             </Form>
           );
@@ -94,12 +60,10 @@ export default class SignupForm extends Component {
 const loading = keyframes`
   from {
     background-position: 0 0;
-    /* rotate: 0; */
   }
 
   to {
     background-position: 100% 100%;
-    /* rotate: 360deg; */
   }
 `;
 
@@ -162,10 +126,6 @@ const Form = styled.form`
     &[aria-busy="true"]::before {
       background-size: 50% auto;
       animation: ${loading} 0.5s linear infinite;
-    }
-
-    .alert {
-      color: ${({ theme }) => theme.red};
     }
   }
 `;
