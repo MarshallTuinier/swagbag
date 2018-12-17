@@ -136,3 +136,12 @@ export const TOGGLE_CART_MUTATION = gql`
     toggleCart @client
   }
 `;
+
+export const ADD_TO_CART_MUTATION = gql`
+  mutation ADD_TO_CART_MUTATION($id: ID!) {
+    addToCart(id: $id) {
+      id
+      quantity
+    }
+  }
+`;

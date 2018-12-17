@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import DeleteItem from "./DeleteItem";
 import formatMoney from "../lib/formatMoney";
+import AddToCart from "./AddToCart";
 
 export default class Item extends Component {
   static propTypes = {
@@ -37,8 +38,8 @@ export default class Item extends Component {
           >
             <a>Edit 📝</a>
           </Link>
-          <button>Add To Cart</button>
-          <DeleteItem id={item.id}>Delete This Item</DeleteItem>
+          <AddToCart id={item.id} />
+          <DeleteItem id={item.id}>Delete This Item 🚫</DeleteItem>
         </div>
       </StyledItem>
     );
