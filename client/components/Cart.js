@@ -3,30 +3,53 @@ import { Query, Mutation } from "react-apollo";
 import styled from "styled-components";
 
 import { LOCAL_STATE_QUERY, TOGGLE_CART_MUTATION } from "../GraphQL";
+import User from "./User";
+import CartItem from "./CartItem";
+import calcTotalPrice from "../lib/calcTotalPrice";
+import formatMoney from "../lib/formatMoney";
 
 const Cart = props => {
   return (
-    <Mutation mutation={TOGGLE_CART_MUTATION}>
-      {toggleCart => (
-        <Query query={LOCAL_STATE_QUERY}>
-          {({ data }) => (
-            <CartStyles open={data.cartOpen}>
-              <header>
-                <CloseButton title="close" onClick={toggleCart}>
-                  &times;
-                </CloseButton>
-                <Supreme>Your Cart</Supreme>
-                <p>You Have __ Items in Your Cart</p>
-              </header>
-              <footer>
-                <p>$10.10</p>
-                <SweetButton>Checkout</SweetButton>
-              </footer>
-            </CartStyles>
-          )}
-        </Query>
-      )}
-    </Mutation>
+    <User>
+      {({ data: { currentUser } }) => {
+        if (!currentUser) return null;
+        return (
+          <Mutation mutation={TOGGLE_CART_MUTATION}>
+            {toggleCart => (
+              <Query query={LOCAL_STATE_QUERY}>
+                {({ data }) => (
+                  <>
+                    <CartStyles open={data.cartOpen}>
+                      <header>
+                        <CloseButton title="close" onClick={toggleCart}>
+                          &times;
+                        </CloseButton>
+                        <Supreme>{currentUser.name}'s Cart</Supreme>
+                        <p>
+                          You Have {currentUser.cart.length} Item
+                          {currentUser.cart.length === 1 ? "" : "s"} in Your
+                          Cart
+                        </p>
+                      </header>
+                      <ul>
+                        {currentUser.cart.map(cartItem => (
+                          <CartItem cartItem={cartItem} key={cartItem.id} />
+                        ))}
+                      </ul>
+                      <footer>
+                        <p>{formatMoney(calcTotalPrice(currentUser.cart))}</p>
+                        <SweetButton>Checkout</SweetButton>
+                      </footer>
+                    </CartStyles>
+                    <PageMask open={data.cartOpen} onClick={toggleCart} />
+                  </>
+                )}
+              </Query>
+            )}
+          </Mutation>
+        );
+      }}
+    </User>
   );
 };
 
@@ -75,6 +98,7 @@ const CartStyles = styled.div`
     padding: 0;
     list-style: none;
     overflow: scroll;
+    overflow-x: hidden;
   }
 `;
 
@@ -113,4 +137,14 @@ const SweetButton = styled.button`
   &[disabled] {
     opacity: 0.5;
   }
+`;
+
+const PageMask = styled.div`
+  z-index: 4;
+  position: fixed;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  display: ${props => (props.open ? "block" : "none")};
 `;
