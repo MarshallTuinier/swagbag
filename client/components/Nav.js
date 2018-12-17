@@ -5,6 +5,7 @@ import { Mutation } from "react-apollo";
 import { TOGGLE_CART_MUTATION } from "../GraphQL";
 import User from "./User";
 import Signout from "./Signout";
+import CartCount from "./CartCount";
 
 const Nav = () => (
   <User>
@@ -33,7 +34,17 @@ const Nav = () => (
           </Link>
         )}
         <Mutation mutation={TOGGLE_CART_MUTATION}>
-          {toggleCart => <button onClick={toggleCart}>My Cart</button>}
+          {toggleCart => (
+            <button onClick={toggleCart}>
+              My Cart{" "}
+              <CartCount
+                count={currentUser.cart.reduce(
+                  (acc, cartItem) => acc + cartItem.quantity,
+                  0
+                )}
+              />
+            </button>
+          )}
         </Mutation>
       </StyledNav>
     )}
