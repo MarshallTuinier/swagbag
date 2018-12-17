@@ -5,7 +5,7 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 export default class CartCount extends Component {
   static propTypes = {
-    prop: PropTypes
+    count: PropTypes.number.isRequired
   };
 
   render() {
