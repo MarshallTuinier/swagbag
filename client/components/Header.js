@@ -33,6 +33,7 @@ const Header = () => (
       <p>Search</p>
     </div>
     <div>Cart</div>
+
     <Cart />
   </StyledHeader>
 );

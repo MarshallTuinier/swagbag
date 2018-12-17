@@ -50,7 +50,7 @@ const Mutation = {
       `{ id, title user { id }}`
     );
     // Check to see if the user owns that item, or has proper permissions
-    if (!ctx.userId) {
+    if (!ctx.request.userId) {
       throw new Error("You must be logged in to do that!");
     }
     const ownsItem = item.user.id === ctx.request.userId;
@@ -232,7 +232,6 @@ const Mutation = {
     });
     // Check if item is already in the cart
     if (existingCartItem) {
-      console.log("This item is already in the cart");
       // If so, increment the quantity
       return ctx.db.mutation.updateCartItem(
         {

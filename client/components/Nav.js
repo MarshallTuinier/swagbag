@@ -26,6 +26,19 @@ const Nav = () => (
               <a>Account</a>
             </Link>
             <Signout />
+            <Mutation mutation={TOGGLE_CART_MUTATION}>
+              {toggleCart => (
+                <button onClick={toggleCart}>
+                  My Cart{" "}
+                  <CartCount
+                    count={currentUser.cart.reduce(
+                      (acc, cartItem) => acc + cartItem.quantity,
+                      0
+                    )}
+                  />
+                </button>
+              )}
+            </Mutation>
           </>
         )}
         {!currentUser && (
@@ -33,19 +46,6 @@ const Nav = () => (
             <a>Signup</a>
           </Link>
         )}
-        <Mutation mutation={TOGGLE_CART_MUTATION}>
-          {toggleCart => (
-            <button onClick={toggleCart}>
-              My Cart{" "}
-              <CartCount
-                count={currentUser.cart.reduce(
-                  (acc, cartItem) => acc + cartItem.quantity,
-                  0
-                )}
-              />
-            </button>
-          )}
-        </Mutation>
       </StyledNav>
     )}
   </User>

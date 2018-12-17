@@ -6,6 +6,13 @@ import RemoveFromCart from "./RemoveFromCart";
 
 const CartItem = props => {
   const { cartItem } = props;
+  if (!cartItem.item)
+    return (
+      <CartItemStyles>
+        <p>This Item has Been Removed</p>
+        <RemoveFromCart id={cartItem.id} />
+      </CartItemStyles>
+    );
   const { item } = cartItem;
   return (
     <StyledCartItem>

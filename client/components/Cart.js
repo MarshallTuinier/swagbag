@@ -38,6 +38,7 @@ const Cart = props => {
                       </ul>
                       <footer>
                         <p>{formatMoney(calcTotalPrice(currentUser.cart))}</p>
+
                         <SweetButton>Checkout</SweetButton>
                       </footer>
                     </CartStyles>
