@@ -28,7 +28,7 @@ server.express.use(async (req, res, next) => {
   // Attatch the user to the request
   const user = await db.query.user(
     { where: { id: req.userId } },
-    "{ id, permissions, email, name }"
+    "{ id, permissions, email, name, cart { id quantity item { title price id description image largeImage }} }"
   );
   req.user = user;
   next();

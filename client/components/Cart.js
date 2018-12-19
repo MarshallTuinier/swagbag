@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { LOCAL_STATE_QUERY, TOGGLE_CART_MUTATION } from "../GraphQL";
 import User from "./User";
 import CartItem from "./CartItem";
+import TakeMoney from "./TakeMoney";
 import calcTotalPrice from "../lib/calcTotalPrice";
 import formatMoney from "../lib/formatMoney";
 
@@ -38,8 +39,13 @@ const Cart = props => {
                       </ul>
                       <footer>
                         <p>{formatMoney(calcTotalPrice(currentUser.cart))}</p>
-
-                        <SweetButton>Checkout</SweetButton>
+                        {currentUser.cart.length ? (
+                          <TakeMoney>
+                            <SweetButton>Checkout</SweetButton>
+                          </TakeMoney>
+                        ) : (
+                          <SweetButton disabled>Add Some Items!</SweetButton>
+                        )}
                       </footer>
                     </CartStyles>
                     <PageMask open={data.cartOpen} onClick={toggleCart} />

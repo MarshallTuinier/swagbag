@@ -5,6 +5,8 @@ const { promisify } = require("util");
 
 const { transport, makeEmail } = require("../mail.js");
 const { hasPermission } = require("../utils");
+const stripe = require("../stripe");
+
 const Mutation = {
   async createItem(parent, args, ctx, info) {
     // Check if user is logged in
@@ -275,6 +277,54 @@ const Mutation = {
       },
       info
     );
+  },
+
+  async createOrder(parent, args, ctx, info) {
+    // Get current user Info
+    if (!ctx.request.userId)
+      throw new Error("You must be logged in to complete this order!");
+    const user = ctx.request.user;
+    console.log(user);
+    // Recalculate total for the price to ensure no funny business happened on the frontend
+    const amount = user.cart.reduce(
+      (acc, cartItem) => acc + cartItem.item.price * cartItem.quantity,
+      0
+    );
+    // Create the Stripe charge (turn token into $$)
+    const charge = await stripe.charges.create({
+      amount,
+      currency: "USD",
+      source: args.token,
+      description: "SwagBag Order"
+    });
+    // Convert CartItem to OrderItem
+    const orderItems = user.cart.map(cartItem => {
+      const orderItem = {
+        ...cartItem.item,
+        quantity: cartItem.quantity,
+        user: { connect: { id: user.id } }
+      };
+      delete orderItem.id;
+      return orderItem;
+    });
+    // create the Order
+    const order = await ctx.db.mutation.createOrder({
+      data: {
+        total: charge.amount,
+        charge: charge.id,
+        items: { create: orderItems },
+        user: { connect: { id: user.id } }
+      }
+    });
+    // Clean up - clear users cart, delete cartItems
+    const cartItemIds = user.cart.map(cartItem => cartItem.id);
+    await ctx.db.mutation.deleteManyCartItems({
+      where: {
+        id_in: cartItemIds
+      }
+    });
+    // Return the order to the client
+    return order;
   }
 };
 
