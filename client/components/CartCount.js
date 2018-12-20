@@ -19,7 +19,7 @@ export default class CartCount extends Component {
             className="count"
             classNames="count"
             key={count}
-            timeout={{ enter: 5000, exit: 500 }}
+            timeout={{ enter: 500, exit: 500 }}
           >
             <Dot>{count}</Dot>
           </CSSTransition>
