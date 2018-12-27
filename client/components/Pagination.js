@@ -17,7 +17,7 @@ const Pagination = ({ page }) => {
         const count = data.itemsConnection.aggregate.count;
         const pages = Math.ceil(count / perPage);
         return (
-          <StyledPagination>
+          <StyledPagination data-test="pagination">
             <Head>
               <title>
                 SwagBag | Page {page} of {pages}
@@ -35,7 +35,7 @@ const Pagination = ({ page }) => {
               </a>
             </Link>
             <p>
-              Page {page} of {pages}
+              Page {page} of <span className="total-pages">{pages}</span>
             </p>
             <p>{count} Items Total</p>
             <Link
@@ -45,7 +45,7 @@ const Pagination = ({ page }) => {
                 query: { page: page + 1 }
               }}
             >
-              <a className="prev" aria-disabled={page >= pages}>
+              <a className="next" aria-disabled={page >= pages}>
                 Next →
               </a>
             </Link>
