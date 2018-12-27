@@ -22,6 +22,7 @@ export default class RequestResetForm extends Component {
           return (
             <Form
               method="post"
+              data-test="form"
               onSubmit={async event => {
                 event.preventDefault();
                 await requestReset();
