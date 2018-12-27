@@ -4,7 +4,7 @@ import wait from "waait";
 import { MockedProvider } from "react-apollo/test-utils";
 
 import SingleItem from "../components/SingleItem";
-import { SINGLE_ITEM_QUERY } from "../GraphQL/Query";
+import { SINGLE_ITEM_QUERY } from "../GraphQL";
 import { fakeItem } from "../lib/testUtils";
 
 describe("<SingleItem />", () => {
