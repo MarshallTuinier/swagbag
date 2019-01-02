@@ -27,9 +27,9 @@ class RemoveFromCart extends Component {
         update={this.update}
         // Opitimistic UI
         optimisticResponse={{
-          __typname: "Mutation",
+          __typename: "Mutation",
           removeFromCart: {
-            __typname: "CartItem",
+            __typename: "CartItem",
             id: this.props.id
           }
         }}

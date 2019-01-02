@@ -3,10 +3,8 @@ import StripeCheckout from "react-stripe-checkout";
 import { Mutation } from "react-apollo";
 import Router from "next/router";
 import NProgress from "nprogress";
-import PropTypes from "prop-types";
 
 import calcTotalPrice from "../lib/calcTotalPrice";
-import Error from "./ErrorMessage";
 import User from "./User";
 import { CURRENT_USER_QUERY, CREATE_ORDER_MUTATION } from "../GraphQL";
 
@@ -29,13 +27,14 @@ export default class TakeMoney extends React.Component {
   render() {
     return (
       <User>
-        {({ data: { currentUser } }) => {
+        {({ data: { currentUser }, loading }) => {
+          if (loading) return null;
           return (
             <Mutation
               mutation={CREATE_ORDER_MUTATION}
               refetchQueries={[{ query: CURRENT_USER_QUERY }]}
             >
-              {(createOrder, { loading, error }) => {
+              {createOrder => {
                 return (
                   <StripeCheckout
                     amount={calcTotalPrice(currentUser.cart)}
