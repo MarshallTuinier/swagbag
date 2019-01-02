@@ -22,7 +22,7 @@ export default class Order extends Component {
           if (loading) return <p>Loading...</p>;
           const { order } = data;
           return (
-            <StyledOrder>
+            <StyledOrder data-test="order">
               <Head>
                 <title>SwagBag | Order {order.id}</title>
               </Head>
