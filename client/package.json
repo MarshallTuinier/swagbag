@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next -p 7778",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "test": "SET NODE_ENV=test&& jest --watch",
     "heroku-postbuild": "next build"
   },
